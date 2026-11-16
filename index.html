@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LibraryApp - Home</title>
+  <style>
+    :root {
+      --bg-color: #0b0d14;
+      --surface-color: #151823;
+      --card-bg: rgba(21, 24, 35, 0.85);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --border: rgba(255, 255, 255, 0.1);
+      --radius: 14px;
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    body.light-theme {
+      --bg-color: #f1f5f9;
+      --surface-color: #ffffff;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: rgba(0, 0, 0, 0.1);
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 50px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--surface-color);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 16px 0;
+    }
+
+    .nav-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--text-main);
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-right-group {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+    .theme-toggle-btn, .lang-dropdown-btn {
+      background: var(--surface-color);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: var(--radius);
+      outline: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .theme-toggle-btn:hover, .lang-dropdown-btn:hover { background: rgba(99, 102, 241, 0.1); }
+
+    .lang-dropdown-container, .user-menu-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 6px;
+      background: var(--surface-color);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 160px;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1100;
+    }
+
+    .dropdown-menu.show { display: flex; }
+
+    .dropdown-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .dropdown-item {
+      padding: 12px 16px;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background 0.2s, color 0.2s;
+      display: block;
+      border: none;
+      background: none;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover { background: rgba(99, 102, 241, 0.15); color: var(--primary); }
+    .dropdown-item.danger:hover { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+    .user-icon-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: background 0.3s, transform 0.2s;
+    }
+    .user-icon-btn:hover { background: rgba(99, 102, 241, 0.4); transform: scale(1.05); }
+
+    .btn-primary {
+      background-color: var(--primary) !important;
+      color: #ffffff !important;
+      padding: 8px 16px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      display: inline-block;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background-color: var(--primary-hover) !important; }
+
+    .container {
+      max-width: 1300px;
+      margin: 32px auto 0;
+      padding: 0 20px;
+    }
+
+    .page-header { text-align: center; margin-bottom: 32px; }
+    .page-header h1 { font-size: 2.5rem; margin-bottom: 8px; }
+    .page-header p { color: var(--text-muted); font-size: 1rem; }
+
+    .alert {
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      display: none;
+      font-weight: 500;
+    }
+    .alert-error { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .alert-success { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+
+    .search-box {
+      flex: 1;
+      max-width: 400px;
+      padding: 12px 16px;
+      background: var(--surface-color);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .filter-tabs { display: flex; gap: 8px; }
+
+    .filter-btn {
+      background: var(--surface-color);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .filter-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+    /* ---------------------------------------------------- */
+    /* PREMIUM HIGH-END REALISTIC 3D HARDCOVER BOOK DESIGN  */
+    /* ---------------------------------------------------- */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 55px 24px;
+      padding: 30px 10px 40px;
+    }
+
+    .book-card {
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    /* 3D Perspective Wrapper */
+    .book-3d-wrapper {
+      perspective: 1400px;
+      width: 175px;
+      height: 260px;
+      margin-bottom: 24px;
+    }
+
+    .book-3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateY(-28deg) rotateX(10deg);
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
+      border-radius: 4px 10px 10px 4px;
+      box-shadow: -18px 22px 35px rgba(0, 0, 0, 0.65);
+    }
+
+    .book-card:hover .book-3d {
+      transform: rotateY(-5deg) rotateX(2deg) translateY(-12px) scale(1.05);
+      box-shadow: -10px 25px 45px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Book Cover Body */
+    .book-cover {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 4px 10px 10px 4px;
+      /* Realistic spine crease lighting + inner shadow */
+      box-shadow: inset 16px 0 25px rgba(0, 0, 0, 0.6), inset -4px 0 10px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 22px 16px 20px 24px; /* Extra left padding for spine crease */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      overflow: visible;
+    }
+
+    /* Spine crease line on the left */
+    .book-cover::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 14px;
+      width: 3px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      box-shadow: 1px 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Inner Golden Frame Border */
+    .book-cover::before {
+      content: '';
+      position: absolute;
+      top: 10px; left: 20px; right: 10px; bottom: 10px;
+      border: 1px solid currentColor;
+      opacity: 0.35;
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .cover-top-brand {
+      font-size: 0.58rem;
+      letter-spacing: 2.5px;
+      opacity: 0.75;
+      text-transform: uppercase;
+      z-index: 1;
+      margin-left: 8px;
+    }
+
+    .cover-main-info {
+      z-index: 1;
+      padding: 0 4px;
+      margin-left: 8px;
+    }
+
+    .cover-book-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f8fafc;
+      line-height: 1.35;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .cover-book-author {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    .cover-bottom-year {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      z-index: 1;
+      font-family: monospace;
+      margin-left: 8px;
+    }
+
+    /* 3D Pages Block on the Right Edge */
+    .book-pages {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      right: -14px;
+      width: 14px;
+      background: linear-gradient(90deg, #cbd5e1 0%, #ffffff 40%, #e2e8f0 80%, #94a3b8 100%);
+      transform-origin: left;
+      transform: rotateY(90deg);
+      border-radius: 0 2px 2px 0;
+      box-shadow: inset 0 0 3px rgba(0,0,0,0.2);
+    }
+
+    /* Static Status Badge Over Cover */
+    .book-badge-pos {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      z-index: 20;
+      transform: rotateX(-10deg) rotateY(28deg);
+      transform-origin: top right;
+      transition: transform 0.5s ease;
+    }
+
+    .book-card:hover .book-badge-pos {
+      transform: rotateX(0deg) rotateY(0deg);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .badge-available { background: #10b981; color: white; }
+    .badge-borrowed { background: #f59e0b; color: white; }
+
+    /* Book Info Below 3D Card */
+    .book-info-bottom {
+      text-align: center;
+      width: 100%;
+    }
+
+    .book-title {
+      font-size: 0.95rem;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: var(--text-main);
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .book-title:hover { color: var(--primary); }
+    .book-author { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 10px; }
+    .borrower-box { background: var(--surface-color); padding: 6px; border-radius: 6px; font-size: 0.75rem; margin-bottom: 10px; border: 1px solid var(--border); }
+
+    .card-actions { display: flex; gap: 6px; justify-content: center; width: 100%; }
+    button { padding: 8px 14px; border: none; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+    .btn-success { background-color: var(--success); color: white; }
+    .btn-warning { background-color: var(--warning); color: white; }
+    .btn-secondary { background-color: #475569; color: white; }
+
+    /* Single View & Modal */
+    #singleBookView { display: none; }
+    .single-book-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 32px;
+    }
+    
+    .single-book-cover-mock {
+      width: 100%;
+      height: 350px;
+      border-radius: 4px 10px 10px 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 30px 20px 30px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .single-book-cover-mock::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 16px; width: 3px; height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-card { background: var(--surface-color); border: 1px solid var(--border); padding: 28px; border-radius: var(--radius); width: 100%; max-width: 450px; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">📚 LibraryApp</a>
+      <div class="nav-right-group">
+        <ul class="nav-links">
+          <li><a href="index.html" class="active" id="navHome">Գլխավոր</a></li>
+          <li><a href="about.html" id="navAbout">Մեր Մասին</a></li>
+        </ul>
+        <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()" title="Փոխել լուսավորությունը">☀️</button>
+        
+        <!-- Custom Language Dropdown -->
+        <div class="lang-dropdown-container">
+          <button id="langDropdownBtn" class="lang-dropdown-btn" onclick="toggleLangMenu(event)">🇦🇲 HY ▾</button>
+          <div class="dropdown-menu" id="langDropdownMenu">
+            <button class="dropdown-item" onclick="changeLanguage('hy')">🇦🇲 Հայերեն</button>
+            <button class="dropdown-item" onclick="changeLanguage('en')">🇬🇧 English</button>
+            <button class="dropdown-item" onclick="changeLanguage('ru')">🇷🇺 Русский</button>
+          </div>
+        </div>
+
+        <div id="authNavItem"></div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div id="mainLibraryView">
+      <header class="page-header">
+        <h1 id="mainTitle">Գրադարանի Կառավարման Համակարգ</h1>
+        <p id="mainSubtitle">Ընտրեք գրքերը և կատարեք ամրագրումներ</p>
+      </header>
+
+      <div id="alertBanner" class="alert"></div>
+
+      <div class="filter-bar">
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Որոնել ըստ վերնագրի կամ հեղինակի...">
+        <div class="filter-tabs">
+          <button class="filter-btn active" data-filter="all" id="filterAll">Բոլորը</button>
+          <button class="filter-btn" data-filter="available" id="filterAvailable">Հասանելի</button>
+          <button class="filter-btn" data-filter="borrowed" id="filterBorrowed">Վերցված</button>
+        </div>
+      </div>
+
+      <div id="booksGridContainer" class="books-grid"></div>
+      <div id="emptyMessage" style="display:none; text-align:center; padding: 40px; color: var(--text-muted);">Գրքեր չեն գտնվել:</div>
+    </div>
+
+    <div id="singleBookView">
+      <button class="btn-secondary" id="backToLibraryBtn" onclick="closeSingleBook()" style="margin-bottom: 24px;">← Վերադառնալ գրադարան</button>
+      <div class="single-book-card">
+        <div id="singleBookCoverMock" class="single-book-cover-mock">
+          <div class="cover-top-brand">LIBRARY ATELIER</div>
+          <div>
+            <h3 id="singleMockTitle" style="color: #f8fafc; font-size: 1.2rem; margin-bottom: 10px;"></h3>
+            <p id="singleMockAuthor" style="font-size: 0.9rem; opacity: 0.9;"></p>
+          </div>
+          <div id="singleMockYear" style="font-family: monospace; opacity: 0.7;"></div>
+        </div>
+        <div>
+          <h2 id="singleBookTitle" style="margin-bottom: 10px;"></h2>
+          <p class="book-author"><strong id="lblAuthors">Հեղինակներ՝</strong> <span id="singleBookAuthor"></span></p>
+          <p class="book-year" style="margin-bottom: 16px;"><strong id="lblYear">Տարի՝</strong> <span id="singleBookYear"></span></p>
+          <div style="background: var(--surface-color); padding: 16px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px;">
+            <p><strong id="lblStatus">Կարգավիճակ՝</strong> <span id="singleBookStatus"></span></p>
+            <div id="singleBookBorrowerInfo" style="margin-top: 8px;"></div>
+          </div>
+          <div id="singleBookActions" style="display: flex; gap: 8px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="borrowModal" class="modal-overlay">
+    <div class="modal-card">
+      <h3 id="modalHeading" style="margin-bottom: 12px;">Ամրագրել գիրքը</h3>
+      <p id="borrowBookTitleName" style="font-weight: bold; margin-bottom: 12px;"></p>
+      <input type="text" id="borrowerNameInput" placeholder="Ձեր անունը *" style="width: 100%; padding: 12px; background: var(--surface-color); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); margin-bottom: 16px; outline: none;">
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-secondary" id="modalCancel" onclick="closeModal('borrowModal')">Չեղարկել</button>
+        <button class="btn-success" id="confirmBorrowBtn">Հաստատել</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'library_app_books_v13';
+    const SESSION_KEY = 'library_logged_user';
+    const LANG_KEY = 'library_lang';
+    const THEME_KEY = 'library_theme';
+
+    let currentLang = localStorage.getItem(LANG_KEY) || 'hy';
+    let books = [];
+    let currentUser = null;
+    let activeFilter = 'all';
+    let currentSearchTerm = '';
+    let selectedBookId = null;
+    let isMenuOpen = false;
+    let isLangMenuOpen = false;
+
+    const coverPalettes = [
+      { bg: 'linear-gradient(145deg, #1e1b2e, #0f0d1a)', accent: '#c084fc', text: '#e9d5ff' },
+      { bg: 'linear-gradient(145deg, #281c18, #140d0b)', accent: '#fb923c', text: '#ffedd5' },
+      { bg: 'linear-gradient(145deg, #132238, #08111f)', accent: '#38bdf8', text: '#e0f2fe' },
+      { bg: 'linear-gradient(145deg, #162e24, #0a1712)', accent: '#34d399', text: '#d1fae5' },
+      { bg: 'linear-gradient(145deg, #2a1b2e, #140d17)', accent: '#f472b6', text: '#fce7f3' },
+      { bg: 'linear-gradient(145deg, #2b261b, #14120c)', accent: '#facc15', text: '#fef08a' }
+    ];
+
+    function getCoverStyle(id) {
+      const index = (parseInt(id) || 0) % coverPalettes.length;
+      return coverPalettes[index];
+    }
+
+    const defaultBooks = [
+      { id: '1', title: { hy: '1984', en: '1984', ru: '1984' }, author: { hy: 'Ջորջ Օրուել', en: 'George Orwell', ru: 'Джон Орвелл' }, year: 1949, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '2', title: { hy: 'Հանցանք և պատուհաս', en: 'Crime and Punishment', ru: 'Преступление и наказание' }, author: { hy: 'Ֆյոդոր Դոստոևսկի', en: 'Fyodor Dostoevsky', ru: 'Фёдор Достоевский' }, year: 1866, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '3', title: { hy: 'Մեծն Գեթսբի', en: 'The Great Gatsby', ru: 'Великий Гэтсби' }, author: { hy: 'Ֆրենսիս Սքոթ Ֆիցջերալդ', en: 'F. Scott Fitzgerald', ru: 'Фрэнсис Скотт Фицджеральд' }, year: 1925, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '4', title: { hy: 'Հպարտություն և նախապաշարմունք', en: 'Pride and Prejudice', ru: 'Гордость и предубеждение' }, author: { hy: 'Ջեյն Օսթին', en: 'Jane Austen', ru: 'Джейн Остин' }, year: 1813, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '5', title: { hy: 'Վարպետը և Մարգարիտան', en: 'The Master and Margarita', ru: 'Мастер и Маргарита' }, author: { hy: 'Միխայիլ Բուլգակով', en: 'Mikhail Bulgakov', ru: 'Михаил Булгаков' }, year: 1967, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '6', title: { hy: 'Փոքրիկ Իշխանը', en: 'The Little Prince', ru: 'Маленький принц' }, author: { hy: 'Անտուան դը Սենտ-Էզյուպերի', en: 'Antoine de Saint-Exupéry', ru: 'Антуан де Сент-Экзюпери' }, year: 1943, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '7', title: { hy: 'Հոբիթ', en: 'The Hobbit', ru: 'Хоббит' }, author: { hy: 'Ջ.Ռ.Ռ. Թոլքին', en: 'J.R.R. Tolkien', ru: 'Джон Р. Р. Толкин' }, year: 1937, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '8', title: { hy: 'Երեք ընկեր', en: 'Three Comrades', ru: 'Три товарища' }, author: { hy: 'Էրիխ Մարիա Ռեմարկ', en: 'Erich Maria Remarque', ru: 'Эрих Мария Ремарк' }, year: 1936, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '9', title: { hy: 'Սպանել ծղրիդին', en: 'To Kill a Mockingbird', ru: 'Убить пересмешника' }, author: { hy: 'Հարպեր Լի', en: 'Harper Lee', ru: 'Харпер Ли' }, year: 1960, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '10', title: { hy: 'Ֆարենհայթով 451', en: 'Fahrenheit 451', ru: '451 градус по Фаренгейту' }, author: { hy: 'Ռեյ Բրեդբերի', en: 'Ray Bradbury', ru: 'Рэй Брэдбери' }, year: 1953, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '11', title: { hy: 'Պատերազմ և խաղաղություն', en: 'War and Peace', ru: 'Война и мир' }, author: { hy: 'Լև Տոլստոյ', en: 'Leo Tolstoy', ru: 'Лев Толстой' }, year: 1869, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '12', title: { hy: 'Աննա Կարենինա', en: 'Anna Karenina', ru: 'Анна Каренина' }, author: { hy: 'Լև Տոլստոյ', en: 'Leo Tolstoy', ru: 'Лев Толстой' }, year: 1878, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '13', title: { hy: 'Կարամազով եղբայրներ', en: 'The Brothers Karamazov', ru: 'Братья Карамазовы' }, author: { hy: 'Ֆյոդոր Դոստոևսկի', en: 'Fyodor Dostoevsky', ru: 'Фёдор Достоевский' }, year: 1880, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '14', title: { hy: 'Դորիան Գրեյի նկարը', en: 'The Picture of Dorian Gray', ru: 'Портрет Дориана Грея' }, author: { hy: 'Օսկար Ուայլդ', en: 'Oscar Wilde', ru: 'Оскар Уайльд' }, year: 1890, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '15', title: { hy: 'Ալքիմիկոսը', en: 'The Alchemist', ru: 'Алхимик' }, author: { hy: 'Պաուլո Կոելյո', en: 'Paulo Coelho', ru: 'Пауло Коэльо' }, year: 1988, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '16', title: { hy: 'Մատանիների տիրակալը', en: 'The Lord of the Rings', ru: 'Властелин Колец' }, author: { hy: 'Ջ.Ռ.Ռ. Թոլքին', en: 'J.R.R. Tolkien', ru: 'Джон Р. Р. Толкин' }, year: 1954, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '17', title: { hy: 'Հարի Փոթերը և փիլիսոփայական քարը', en: 'Harry Potter and the Philosopher\'s Stone', ru: 'Гарри Поттер и философский камень' }, author: { hy: 'Ջ. Ք. Ռոուլինգ', en: 'J.K. Rowling', ru: 'Джоан Роулинг' }, year: 1997, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '18', title: { hy: 'Դա Վինչիի կոդը', en: 'The Da Vinci Code', ru: 'Код да Винчи' }, author: { hy: 'Դեն Բրաուն', en: 'Dan Brown', ru: 'Дэн Браун' }, year: 2003, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '19', title: { hy: 'Հարյուր տարվա մենություն', en: 'One Hundred Years of Solitude', ru: 'Сто лет одиночества' }, author: { hy: 'Գաբրիել Գարսիա Մարկես', en: 'Gabriel García Márquez', ru: 'Габриэль Гарсиа Маркес' }, year: 1967, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '20', title: { hy: 'Կերպարանափոխություն', en: 'The Metamorphosis', ru: 'Превращение' }, author: { hy: 'Ֆրանց Կաֆկա', en: 'Franz Kafka', ru: 'Франц Кафка' }, year: 1915, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '21', title: { hy: 'Քաջալի Նոր Աշխարհ', en: 'Brave New World', ru: 'О дивный новый мир' }, author: { hy: 'Ալդոս Հաքսլի', en: 'Aldous Huxley', ru: 'Олдос Хаксли' }, year: 1932, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '22', title: { hy: 'Մոբի Դիկ', en: 'Moby-Dick', ru: 'Моби Дик' }, author: { hy: 'Հերման Մելվիլ', en: 'Herman Melville', ru: 'Герман Мелвилл' }, year: 1851, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '23', title: { hy: 'Կոմս Մոնտե-Քրիստո', en: 'The Count of Monte Cristo', ru: 'Граф Монте-Кристо' }, author: { hy: 'Ալեքսանդր Դյումա', en: 'Alexandre Dumas', ru: 'Александр Дюма' }, year: 1844, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '24', title: { hy: 'Թշվառները', en: 'Les Misérables', ru: 'Отверженные' }, author: { hy: 'Վիկտոր Հյուգո', en: 'Victor Hugo', ru: 'Виктор Гюго' }, year: 1862, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '25', title: { hy: 'Ջեյն Էյր', en: 'Jane Eyre', ru: 'Джейн Эйр' }, author: { hy: 'Շառլոտ Բրոնտե', en: 'Charlotte Brontë', ru: 'Шарлотта Бронте' }, year: 1847, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '26', title: { hy: 'Մառախլապատ լեռների հողմը', en: 'Wuthering Heights', ru: 'Грозовой перевал' }, author: { hy: 'Էմիլի Բրոնտե', en: 'Emily Brontë', ru: 'Эмили Бронте' }, year: 1847, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '27', title: { hy: 'Տարեկանի արտում, անդունդի եզրին', en: 'The Catcher in the Rye', ru: 'Над пропастью во ржи' }, author: { hy: 'Ջ. Դ. Սելինջեր', en: 'J.D. Salinger', ru: 'Джером Сэлинджер' }, year: 1951, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '28', title: { hy: 'Ճանճերի տիրակալը', en: 'Lord of the Flies', ru: 'Повелитель мух' }, author: { hy: 'Ուիլյամ Գոլդինգ', en: 'William Golding', ru: 'Уильям Голдинг' }, year: 1954, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '29', title: { hy: 'Անասնաֆերմա', en: 'Animal Farm', ru: 'Скотный двор' }, author: { hy: 'Ջորջ Օրուել', en: 'George Orwell', ru: 'Джордж Оруэлл' }, year: 1945, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '30', title: { hy: 'Դրակուլա', en: 'Dracula', ru: 'Дракула' }, author: { hy: 'Բրեմ Ստոկեր', en: 'Bram Stoker', ru: 'Брэм Стокер' }, year: 1897, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '31', title: { hy: 'Ֆրանկենշտեյն', en: 'Frankenstein', ru: 'Франкенштейн' }, author: { hy: 'Մերի Շելի', en: 'Mary Shelley', ru: 'Мэри Шелли' }, year: 1818, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '32', title: { hy: 'Թոմ Սոյերի արկածները', en: 'The Adventures of Tom Sawyer', ru: 'Приключения Тома Сойера' }, author: { hy: 'Մարկ Տվեն', en: 'Mark Twain', ru: 'Марк Твен' }, year: 1876, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '33', title: { hy: 'Գանձերի կղզի', en: 'Treasure Island', ru: 'Остров сокровищ' }, author: { hy: 'Ռոբերտ Լուիս Սթիվենսոն', en: 'Robert Louis Stevenson', ru: 'Роберт Льюис Стивенсон' }, year: 1883, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '34', title: { hy: 'Ալիսը Հրաշքների աշխարհում', en: 'Alice\'s Adventures in Wonderland', ru: 'Приключения Алисы в Стране чудес' }, author: { hy: 'Լյուիս Քերոլ', en: 'Lewis Carroll', ru: 'Льюис Кэрролл' }, year: 1865, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '35', title: { hy: 'Շերլոկ Հոլմսի արկածները', en: 'The Adventures of Sherlock Holmes', ru: 'Приключения Шерлока Холмса' }, author: { hy: 'Արթուր Կոնան Դոյլ', en: 'Arthur Conan Doyle', ru: 'Артур Конан Дойл' }, year: 1892, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '36', title: { hy: 'Երեք հրացանակիրները', en: 'The Three Musketeers', ru: 'Три мушкетера' }, author: { hy: 'Ալեքսանդր Դյումա', en: 'Alexandre Dumas', ru: 'Александр Дюма' }, year: 1844, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '37', title: { hy: 'Վայրենի նախնիների կանչը', en: 'The Call of the Wild', ru: 'Зов предков' }, author: { hy: 'Ջեք Լոնդոն', en: 'Jack London', ru: 'Джек Лондон' }, year: 1903, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '38', title: { hy: 'Բարկության ողկույզներ', en: 'The Grapes of Wrath', ru: 'Гроздья гнева' }, author: { hy: 'Ջոն Սթայնբեք', en: 'John Steinbeck', ru: 'Джон Стейнбек' }, year: 1939, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '39', title: { hy: 'Մկների և մարդկանց մասին', en: 'Of Mice and Men', ru: 'О мышах и людях' }, author: { hy: 'Ջոն Սթայնբեք', en: 'John Steinbeck', ru: 'Джон Стейнбек' }, year: 1937, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '40', title: { hy: 'Ծերունին և ծովը', en: 'The Old Man and the Sea', ru: 'Старик и море' }, author: { hy: 'Էռնեստ Հեմինգվեյ', en: 'Ernest Hemingway', ru: 'Эрнест Хемингуэй' }, year: 1952, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '41', title: { hy: 'Դյուն', en: 'Dune', ru: 'Дюна' }, author: { hy: 'Ֆրենկ Հերբերթ', en: 'Frank Herbert', ru: 'Фрэнк Герберт' }, year: 1965, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '42', title: { hy: 'Սամվել', en: 'Samvel', ru: 'Самвел' }, author: { hy: 'Րաֆֆի', en: 'Raffi', ru: 'Раффи' }, year: 1888, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '43', title: { hy: 'Խենթը', en: 'The Fool', ru: 'Безумец' }, author: { hy: 'Վահան Տերյան', en: 'Vahan Teryan', ru: 'Ваан Терьян' }, year: 1908, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '44', title: { hy: 'Վերք Հայաստանի', en: 'The Wounds of Armenia', ru: 'Раны Армении' }, author: { hy: 'Խաչատուր Աբովյան', en: 'Khachatur Abovyan', ru: 'Хачатур Абовян' }, year: 1848, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '45', title: { hy: 'Անավարտ օրագիր', en: 'Unfinished Diary', ru: 'Незавершенный дневник' }, author: { hy: 'Պարույր Սևակ', en: 'Paruyr Sevak', ru: 'Паруйр Севак' }, year: 1970, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '46', title: { hy: 'Կյանքը հին հռոմեական ճանապարհին', en: 'Life on the Old Roman Road', ru: 'Жизнь на старой римской дороге' }, author: { hy: 'Հրանտ Մաթևոսյան', en: 'Hrant Matevosyan', ru: 'Грант Матевосян' }, year: 1967, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '47', title: { hy: 'Մնաս բովանդակության (Բարև)', en: 'Farewell', ru: 'Прощание' }, author: { hy: 'Վիլյամ Սարոյան', en: 'William Saroyan', ru: 'Уильям Сароян' }, year: 1972, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '48', title: { hy: 'Նավը լեռան վրա', en: 'Ship on the Mountain', ru: 'Корабль на горе' }, author: { hy: 'Կոստան Զարյան', en: 'Kostan Zarian', ru: 'Костан Зарян' }, year: 1943, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '49', title: { hy: 'Երկրորդ հայրենիք', en: 'Second Homeland', ru: 'Вторая родина' }, author: { hy: 'Ակսել Բակունց', en: 'Axel Bakunts', ru: 'Аксель Бакуц' }, year: 1930, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' },
+      { id: '50', title: { hy: 'Մատյան ողբերգության', en: 'Book of Lamentations', ru: 'Книга скорбных песнопений' }, author: { hy: 'Գրիգոր Նարեկացի', en: 'Grigor Narekatsi', ru: 'Григор Нарекаци' }, year: 1002, status: 'Available', borrower: '', borrowerEmail: '', borrowDate: '', dueDate: '' }
+    ];
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+      }
+      updateThemeBtnIcon();
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
+      localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+      updateThemeBtnIcon();
+    }
+
+    function updateThemeBtnIcon() {
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {
+        const isLight = document.body.classList.contains('light-theme');
+        btn.textContent = isLight ? '🌙' : '☀️';
+      }
+    }
+
+    const translations = {
+      hy: {
+        navHome: 'Գլխավոր',
+        navAbout: 'Մեր Մասին',
+        mainTitle: 'Գրադարանի Կառավարման Համակարգ',
+        mainSubtitle: 'Ընտրեք գրքերը և կատարեք ամրագրումներ',
+        searchPlaceholder: '🔍 Որոնել ըստ վերնագրի կամ հեղինակի...',
+        filterAll: 'Բոլորը',
+        filterAvailable: 'Հասանելի',
+        filterBorrowed: 'Վերցված',
+        emptyMsg: 'Գրքեր չեն գտնվել:',
+        backLib: '← Վերադառնալ գրադարան',
+        lblAuthors: 'Հեղինակներ՝',
+        lblYear: 'Տարի՝',
+        lblStatus: 'Կարգավիճակ՝',
+        statusAvailable: 'Հասանելի',
+        statusBorrowed: 'Վերցված է',
+        borrowBtn: 'Ամրագրել',
+        returnBtn: 'Վերադարձնել',
+        busyText: 'Զբաղված է',
+        modalHeading: 'Ամրագրել գիրքը',
+        namePlaceholder: 'Ձեր անունը *',
+        modalCancel: 'Չեղարկել',
+        confirmBorrowBtn: 'Հաստատել',
+        adminLink: '⚙️ Ադմին Վահանակ',
+        profileLink: '👤 Պրոֆիլ',
+        logoutBtn: '🚪 Դուրս գալ',
+        loginBtn: 'Մուտք',
+        nameRequired: 'Անունը պարտադիր է:',
+        successBorrow: 'Գիրքն ամրագրվեց',
+        successReturn: 'Գիրքը հաջողությամբ վերադարձվեց:',
+        errNotLoggedIn: 'Գիրք ամրագրելու համար անհրաժեշտ է մուտք գործել համակարգ:',
+        errUnauthorizedReturn: 'Դուք չեք կարող վերադարձնել այս գիրքը, քանի որ այն ամրագրված է այլ օգտատիրոջ կողմից:',
+        borrowedBy: 'Ամրագրել է:',
+        until: 'Մինչև՝',
+        langBtnLabel: '🇦🇲 HY ▾'
+      },
+      en: {
+        navHome: 'Home',
+        navAbout: 'About Us',
+        mainTitle: 'Library Management System',
+        mainSubtitle: 'Select books and make reservations',
+        searchPlaceholder: '🔍 Search by title or author...',
+        filterAll: 'All',
+        filterAvailable: 'Available',
+        filterBorrowed: 'Borrowed',
+        emptyMsg: 'No books found.',
+        backLib: '← Back to library',
+        lblAuthors: 'Authors:',
+        lblYear: 'Year:',
+        lblStatus: 'Status:',
+        statusAvailable: 'Available',
+        statusBorrowed: 'Borrowed',
+        borrowBtn: 'Borrow',
+        returnBtn: 'Return',
+        busyText: 'Reserved',
+        modalHeading: 'Borrow Book',
+        namePlaceholder: 'Your Name *',
+        modalCancel: 'Cancel',
+        confirmBorrowBtn: 'Confirm',
+        adminLink: '⚙️ Admin Panel',
+        profileLink: '👤 Profile',
+        logoutBtn: '🚪 Logout',
+        loginBtn: 'Login',
+        nameRequired: 'Name is required.',
+        successBorrow: 'Book successfully borrowed by',
+        successReturn: 'Book successfully returned!',
+        errNotLoggedIn: 'You must be logged in to borrow a book.',
+        errUnauthorizedReturn: 'You cannot return this book because it was borrowed by another user.',
+        borrowedBy: 'Borrowed by:',
+        until: 'Until:',
+        langBtnLabel: '🇬🇧 EN ▾'
+      },
+      ru: {
+        navHome: 'Главная',
+        navAbout: 'О нас',
+        mainTitle: 'Система Управления Библиотекой',
+        mainSubtitle: 'Выбирайте книги и делайте бронирования',
+        searchPlaceholder: '🔍 Поиск по названию или автору...',
+        filterAll: 'Все',
+        filterAvailable: 'Доступные',
+        filterBorrowed: 'Выданные',
+        emptyMsg: 'Книги не найдены.',
+        backLib: '← Назад в библиотеку',
+        lblAuthors: 'Авторы:',
+        lblYear: 'Год:',
+        lblStatus: 'Статус:',
+        statusAvailable: 'Доступна',
+        statusBorrowed: 'Выдана',
+        borrowBtn: 'Забронировать',
+        returnBtn: 'Вернуть',
+        busyText: 'Занята',
+        modalHeading: 'Бронирование книги',
+        namePlaceholder: 'Ваше имя *',
+        modalCancel: 'Отмена',
+        confirmBorrowBtn: 'Подтвердить',
+        adminLink: '⚙️ Админ Панель',
+        profileLink: '👤 Профиль',
+        logoutBtn: 'Выйти',
+        loginBtn: 'Вход',
+        nameRequired: 'Имя обязательно.',
+        successBorrow: 'Книга успешно забронирована:',
+        successReturn: 'Книга успешно возвращена!',
+        errNotLoggedIn: 'Для бронирования книги необходимо войти в систему.',
+        errUnauthorizedReturn: 'Вы не можете вернуть эту книгу, так как она забронирована другим пользователем.',
+        borrowedBy: 'Забронировал:',
+        until: 'До:',
+        langBtnLabel: '🇷🇺 RU ▾'
+      }
+    };
+
+    function toggleLangMenu(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('langDropdownMenu');
+      const userMenu = document.getElementById('dropdownMenu');
+      if (userMenu) userMenu.classList.remove('show');
+      isLangMenuOpen = !isLangMenuOpen;
+      if (isLangMenuOpen) menu.classList.add('show');
+      else menu.classList.remove('show');
+    }
+
+    function toggleUserMenu(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('dropdownMenu');
+      const langMenu = document.getElementById('langDropdownMenu');
+      if (langMenu) langMenu.classList.remove('show');
+      isMenuOpen = !isMenuOpen;
+      if (isMenuOpen) menu.classList.add('show');
+      else menu.classList.remove('show');
+    }
+
+    function handleMouseEnter() {
+      const menu = document.getElementById('dropdownMenu');
+      if (menu) menu.classList.add('show');
+    }
+
+    function handleMouseLeave() {
+      if (!isMenuOpen) {
+        const menu = document.getElementById('dropdownMenu');
+        if (menu) menu.classList.remove('show');
+      }
+    }
+
+    window.addEventListener('click', (e) => {
+      const langContainer = document.querySelector('.lang-dropdown-container');
+      const langMenu = document.getElementById('langDropdownMenu');
+      if (langContainer && !langContainer.contains(e.target)) {
+        isLangMenuOpen = false;
+        if (langMenu) langMenu.classList.remove('show');
+      }
+
+      const container = document.querySelector('.user-menu-container');
+      const menu = document.getElementById('dropdownMenu');
+      if (container && !container.contains(e.target)) {
+        isMenuOpen = false;
+        if (menu) menu.classList.remove('show');
+      }
+    });
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem(LANG_KEY, lang);
+      isLangMenuOpen = false;
+      document.getElementById('langDropdownMenu').classList.remove('show');
+      updateTexts();
+      renderApp();
+    }
+
+    function updateTexts() {
+      const t = translations[currentLang];
+      document.getElementById('navHome').textContent = t.navHome;
+      document.getElementById('navAbout').textContent = t.navAbout;
+      document.getElementById('mainTitle').textContent = t.mainTitle;
+      document.getElementById('mainSubtitle').textContent = t.mainSubtitle;
+      document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+      document.getElementById('filterAll').textContent = t.filterAll;
+      document.getElementById('filterAvailable').textContent = t.filterAvailable;
+      document.getElementById('filterBorrowed').textContent = t.filterBorrowed;
+      document.getElementById('emptyMessage').textContent = t.emptyMsg;
+      document.getElementById('backToLibraryBtn').textContent = t.backLib;
+      document.getElementById('lblAuthors').textContent = t.lblAuthors;
+      document.getElementById('lblYear').textContent = t.lblYear;
+      document.getElementById('lblStatus').textContent = t.lblStatus;
+      document.getElementById('modalHeading').textContent = t.modalHeading;
+      document.getElementById('borrowerNameInput').placeholder = t.namePlaceholder;
+      document.getElementById('modalCancel').textContent = t.modalCancel;
+      document.getElementById('confirmBorrowBtn').textContent = t.confirmBorrowBtn;
+      document.getElementById('langDropdownBtn').textContent = t.langBtnLabel;
+
+      initSession();
+    }
+
+    function initSession() {
+      const session = localStorage.getItem(SESSION_KEY);
+      if (session) {
+        try { currentUser = JSON.parse(session); } catch(e) { currentUser = null; }
+      }
+      
+      const t = translations[currentLang];
+      const authNavItem = document.getElementById('authNavItem');
+      if (currentUser) {
+        const isAdmin = currentUser.email === 'admin@example.com';
+        const profileLink = isAdmin ? 'admin.html' : 'userprofile.html';
+        const profileText = isAdmin ? t.adminLink : t.profileLink;
+
+        authNavItem.innerHTML = `
+          <div class="user-menu-container" onmouseenter="handleMouseEnter()" onmouseleave="handleMouseLeave()">
+            <div class="user-icon-btn" onclick="toggleUserMenu(event)" title="${currentUser.name || 'User'}">👤</div>
+            <div class="dropdown-menu" id="dropdownMenu">
+              <div class="dropdown-header">${currentUser.name || 'User'}</div>
+              <a href="${profileLink}" class="dropdown-item">${profileText}</a>
+              <button class="dropdown-item danger" onclick="logout()">${t.logoutBtn}</button>
+            </div>
+          </div>
+        `;
+      } else {
+        authNavItem.innerHTML = `<a href="auth.html" class="btn-primary">${t.loginBtn}</a>`;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      currentUser = null;
+      window.location.reload();
+    }
+
+    function loadBooks() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try { 
+          books = JSON.parse(stored); 
+          if (!Array.isArray(books) || books.length === 0) {
+            books = defaultBooks;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+          }
+        } catch(e) { 
+          books = defaultBooks; 
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+        }
+      } else {
+        books = defaultBooks;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+      }
+    }
+
+    function showAlert(message, type = 'error') {
+      const banner = document.getElementById('alertBanner');
+      banner.className = `alert alert-${type}`;
+      banner.textContent = message;
+      banner.style.display = 'block';
+      setTimeout(() => { banner.style.display = 'none'; }, 4000);
+    }
+
+    function openBorrowModal(id) {
+      const t = translations[currentLang];
+      if (!currentUser) {
+        showAlert(t.errNotLoggedIn, 'error');
+        setTimeout(() => { window.location.href = 'auth.html'; }, 1500);
+        return;
+      }
+
+      const book = books.find(b => b.id === id);
+      if (!book) return;
+      selectedBookId = id;
+      document.getElementById('borrowBookTitleName').textContent = `«${(book.title && (book.title[currentLang] || book.title.hy)) || book.title}»`;
+      document.getElementById('borrowerNameInput').value = currentUser.name || '';
+      document.getElementById('borrowModal').style.display = 'flex';
+    }
+
+    document.getElementById('confirmBorrowBtn').addEventListener('click', () => {
+      const t = translations[currentLang];
+      if (!currentUser) return;
+
+      const name = document.getElementById('borrowerNameInput').value.trim();
+      if (!name) { showAlert(t.nameRequired, 'error'); return; }
+
+      const book = books.find(b => b.id === selectedBookId);
+      if (book) {
+        const today = new Date();
+        const due = new Date();
+        due.setDate(today.getDate() + 14);
+
+        book.status = 'Borrowed';
+        book.borrower = name;
+        book.borrowerEmail = currentUser.email;
+        book.borrowDate = today.toISOString();
+        book.dueDate = due.toISOString();
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+        renderApp();
+        closeModal('borrowModal');
+        showAlert(`${t.successBorrow} ${name}:`, 'success');
+      }
+    });
+
+    function returnBook(id) {
+      const t = translations[currentLang];
+      const book = books.find(b => b.id === id);
+      if (!book) return;
+
+      const isAdmin = currentUser && currentUser.email === 'admin@example.com';
+      const isOwner = currentUser && (currentUser.name === book.borrower || currentUser.email === book.borrowerEmail);
+
+      if (!isAdmin && !isOwner) {
+        showAlert(t.errUnauthorizedReturn, 'error');
+        return;
+      }
+
+      book.status = 'Available';
+      book.borrower = '';
+      book.borrowerEmail = '';
+      book.borrowDate = '';
+      book.dueDate = '';
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+      renderApp();
+      showAlert(t.successReturn, 'success');
+    }
+
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function openSingleBook(id) {
+      const t = translations[currentLang];
+      const book = books.find(b => b.id === id);
+      if (!book) return;
+
+      document.getElementById('mainLibraryView').style.display = 'none';
+      document.getElementById('singleBookView').style.display = 'block';
+
+      const titleDisplay = (book.title && (book.title[currentLang] || book.title.hy)) || book.title;
+      const authorDisplay = (book.author && (book.author[currentLang] || book.author.hy)) || book.author;
+      const palette = getCoverStyle(book.id);
+
+      const mockCover = document.getElementById('singleBookCoverMock');
+      mockCover.style.background = palette.bg;
+      mockCover.style.color = palette.text;
+      mockCover.style.borderColor = palette.accent;
+
+      document.getElementById('singleMockTitle').textContent = titleDisplay;
+      document.getElementById('singleMockAuthor').textContent = authorDisplay;
+      document.getElementById('singleMockAuthor').style.color = palette.accent;
+      document.getElementById('singleMockYear').textContent = book.year || '-';
+
+      document.getElementById('singleBookTitle').textContent = titleDisplay;
+      document.getElementById('singleBookAuthor').textContent = authorDisplay;
+      document.getElementById('singleBookYear').textContent = book.year || '-';
+
+      let statusHtml = book.status === 'Available' ? `<span class="status-badge badge-available">${t.statusAvailable}</span>` : `<span class="status-badge badge-borrowed">${t.statusBorrowed}</span>`;
+      document.getElementById('singleBookStatus').innerHTML = statusHtml;
+
+      const borrowerBox = document.getElementById('singleBookBorrowerInfo');
+      if (book.status === 'Borrowed') {
+        borrowerBox.innerHTML = `<p><strong>${t.borrowedBy}</strong> ${book.borrower}</p><p><strong>${t.until}</strong> ${new Date(book.dueDate).toLocaleDateString()}</p>`;
+      } else {
+        borrowerBox.innerHTML = `<p style="color:var(--success);">${t.statusAvailable}</p>`;
+      }
+
+      const actions = document.getElementById('singleBookActions');
+      const isAdmin = currentUser && currentUser.email === 'admin@example.com';
+      const isOwner = currentUser && (currentUser.name === book.borrower || currentUser.email === book.borrowerEmail);
+
+      if (book.status === 'Available') {
+        actions.innerHTML = `<button class="btn-success" onclick="openBorrowModal('${book.id}'); closeSingleBook();">${t.borrowBtn}</button>`;
+      } else if (isAdmin || isOwner) {
+        actions.innerHTML = `<button class="btn-warning" onclick="returnBook('${book.id}'); closeSingleBook();">${t.returnBtn}</button>`;
+      } else {
+        actions.innerHTML = `<span style="color: var(--text-muted); font-size: 0.9rem;">${t.busyText}</span>`;
+      }
+    }
+
+    function closeSingleBook() {
+      document.getElementById('singleBookView').style.display = 'none';
+      document.getElementById('mainLibraryView').style.display = 'block';
+    }
+
+    function renderApp() {
+      const t = translations[currentLang];
+      const grid = document.getElementById('booksGridContainer');
+      grid.innerHTML = '';
+
+      const filtered = books.filter(b => {
+        const matchesFilter = 
+          activeFilter === 'all' ? true :
+          activeFilter === 'available' ? b.status === 'Available' :
+          activeFilter === 'borrowed' ? b.status === 'Borrowed' : true;
+
+        const term = currentSearchTerm.toLowerCase();
+        const titleText = ((b.title && (b.title[currentLang] || b.title.hy)) || b.title || '').toLowerCase();
+        const authorText = ((b.author && (b.author[currentLang] || b.author.hy)) || b.author || '').toLowerCase();
+        const matchesSearch = titleText.includes(term) || authorText.includes(term);
+
+        return matchesFilter && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        document.getElementById('emptyMessage').style.display = 'block';
+        return;
+      } else {
+        document.getElementById('emptyMessage').style.display = 'none';
+      }
+
+      filtered.forEach(book => {
+        const card = document.createElement('div');
+        card.className = 'book-card';
+
+        let badgeClass = book.status === 'Available' ? 'badge-available' : 'badge-borrowed';
+        let badgeText = book.status === 'Available' ? t.statusAvailable : t.statusBorrowed;
+        let borrowerSnippet = book.status === 'Borrowed' ? `<div class="borrower-box"><strong>${t.borrowedBy}</strong> ${book.borrower}</div>` : '';
+
+        const isAdmin = currentUser && currentUser.email === 'admin@example.com';
+        const isOwner = currentUser && (currentUser.name === book.borrower || currentUser.email === book.borrowerEmail);
+
+        let actionBtnHtml = '';
+        if (book.status === 'Available') {
+          actionBtnHtml = `<button class="btn-success" style="width:100%;" onclick="event.stopPropagation(); openBorrowModal('${book.id}')">${t.borrowBtn}</button>`;
+        } else if (isAdmin || isOwner) {
+          actionBtnHtml = `<button class="btn-warning" style="width:100%;" onclick="event.stopPropagation(); returnBook('${book.id}')">${t.returnBtn}</button>`;
+        } else {
+          actionBtnHtml = `<span style="font-size: 0.8rem; color: var(--text-muted);">${t.busyText}</span>`;
+        }
+
+        const titleDisplay = (book.title && (book.title[currentLang] || book.title.hy)) || book.title;
+        const authorDisplay = (book.author && (book.author[currentLang] || book.author.hy)) || book.author;
+        const palette = getCoverStyle(book.id);
+
+        card.innerHTML = `
+          <div class="book-3d-wrapper" onclick="openSingleBook('${book.id}')">
+            <div class="book-3d">
+              <div class="book-cover" style="background: ${palette.bg}; color: ${palette.accent}; border-color: ${palette.accent};">
+                <div class="cover-top-brand" style="color: ${palette.accent};">LIBRARY ATELIER</div>
+                <div class="cover-main-info">
+                  <div class="cover-book-title" style="color: ${palette.text};">${titleDisplay}</div>
+                  <div class="cover-book-author" style="color: ${palette.accent};">${authorDisplay}</div>
+                </div>
+                <div class="cover-bottom-year" style="color: ${palette.text};">${book.year || ''}</div>
+              </div>
+              <div class="book-pages"></div>
+              <div class="book-badge-pos"><span class="status-badge ${badgeClass}">${badgeText}</span></div>
+            </div>
+          </div>
+          <div class="book-info-bottom">
+            <h3 class="book-title" onclick="openSingleBook('${book.id}')" title="${titleDisplay}">${titleDisplay}</h3>
+            <p class="book-author">${authorDisplay}</p>
+            ${borrowerSnippet}
+            <div class="card-actions">
+              ${actionBtnHtml}
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      currentSearchTerm = e.target.value;
+      renderApp();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.filter;
+        renderApp();
+      });
+    });
+
+    initTheme();
+    updateTexts();
+    loadBooks();
+    renderApp();
+  </script>
+</body>
+</html>

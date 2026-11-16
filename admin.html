@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ադմինիստրատորի Վահանակ - LibraryApp</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    body.light-theme {
+      --bg-color: #f1f5f9;
+      --surface-color: #ffffff;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: rgba(0, 0, 0, 0.1);
+    }
+    body {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .lang-dropdown-container {
+      position: relative;
+      flex: 1;
+    }
+
+    .lang-dropdown-btn {
+      width: 100%;
+      background: var(--surface-color);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px;
+      border-radius: var(--radius);
+      outline: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      left: 0;
+      bottom: 100%;
+      margin-bottom: 6px;
+      background: var(--surface-color);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1100;
+    }
+
+    .dropdown-menu.show { display: flex; }
+
+    .dropdown-item {
+      padding: 10px 14px;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background 0.2s, color 0.2s;
+      display: block;
+      border: none;
+      background: none;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- Left Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <h2>📚 LibraryApp</h2>
+      <span id="sidebarSubtitle">Ադմին Վահանակ</span>
+    </div>
+    
+    <div class="sidebar-menu">
+      <button class="admin-tab-btn active" id="btnTabAdd" onclick="switchAdminTab('addBookTab')">➕ Ավելացնել գիրք</button>
+      <button class="admin-tab-btn" id="btnTabAllBooks" onclick="switchAdminTab('allBooksTab')">📚 Բոլոր գրքերը</button>
+      <button class="admin-tab-btn" id="btnTabUsers" onclick="switchAdminTab('usersTab')">👥 Գրանցված օգտատերեր</button>
+      <button class="admin-tab-btn" id="btnTabBorrows" onclick="switchAdminTab('borrowsTab')">📋 Ամրագրումների պատմություն</button>
+    </div>
+
+    <!-- Controls in Sidebar (Custom Language & Theme) -->
+    <div style="padding: 0 4px; margin-bottom: 14px; display: flex; gap: 8px;">
+      <div class="lang-dropdown-container">
+        <button id="langDropdownBtn" class="lang-dropdown-btn" onclick="toggleLangMenu(event)">🇦🇲 Հայերեն ▾</button>
+        <div class="dropdown-menu" id="langDropdownMenu">
+          <button class="dropdown-item" onclick="changeLanguage('hy')">🇦🇲 Հայերեն</button>
+          <button class="dropdown-item" onclick="changeLanguage('en')">🇬🇧 English</button>
+          <button class="dropdown-item" onclick="changeLanguage('ru')">🇷🇺 Русский</button>
+        </div>
+      </div>
+      <button id="themeToggleBtn" onclick="toggleTheme()" style="padding: 10px 14px; background: var(--surface-color); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); cursor: pointer; font-size: 1rem;" title="Փոխել լուսավորությունը">☀️</button>
+    </div>
+
+    <div class="sidebar-footer">
+      <a href="index.html" class="sidebar-link" id="linkHome">🏠 Գլխավոր էջ</a>
+      <button class="btn-danger-sidebar" id="btnLogout" onclick="logout()">🚪 Դուրս գալ</button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="admin-main animate-fade-in">
+    <header class="page-header">
+      <h1 id="headerTitle">⚙️ Ադմինիստրատորի Վահանակ</h1>
+      <p id="headerSub">Կառավարեք գրքերը, դիտեք օգտատերերին և ամրագրումների պատմությունը</p>
+    </header>
+
+    <div id="alertBanner" class="alert"></div>
+
+    <div class="admin-content-card">
+      <div id="addBookTab" class="admin-section active">
+        <h3 id="addBookHeading" style="margin-bottom: 20px; color: var(--text-main);">Նոր գրքի ավելացում (Բազմալեզու)</h3>
+        <form id="addBookForm">
+          <div class="form-grid">
+            <div class="lang-group">
+              <h4>🇦🇲 ՀԱՅԵՐԵՆ</h4>
+              <input type="text" id="title_hy" placeholder="Վերնագիր (հայ.) *" required>
+              <input type="text" id="author_hy" placeholder="Հեղինակ (հայ.) *" required>
+            </div>
+            <div class="lang-group">
+              <h4>🇬🇧 ENGLISH</h4>
+              <input type="text" id="title_en" placeholder="Title (en.) *" required>
+              <input type="text" id="author_en" placeholder="Author (en.) *" required>
+            </div>
+            <div class="lang-group">
+              <h4>🇷🇺 РУССКИЙ</h4>
+              <input type="text" id="title_ru" placeholder="Название (русс.) *" required>
+              <input type="text" id="author_ru" placeholder="Автор (русс.) *" required>
+            </div>
+          </div>
+          
+          <div class="extra-fields-row">
+            <input type="number" id="bookYear" placeholder="📅 Տարեթիվ" style="flex: 1;">
+            <input type="text" id="bookCover" placeholder="🖼️ Նկարի URL (կամընտիր)" style="flex: 2;">
+            <button type="submit" class="btn-primary" id="btnAddBookSubmit">➕ Ավելացնել գիրքը</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- All Books Tab -->
+      <div id="allBooksTab" class="admin-section">
+        <h3 id="allBooksHeading" style="margin-bottom: 16px; color: var(--text-main);">Կայքի բոլոր գրքերի ցանկ</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th id="thBookTitle">Վերնագիր</th>
+                <th id="thBookAuthor">Հեղինակ</th>
+                <th id="thAddedBy">Ավելացնող</th>
+                <th id="thAddedAt">Ավելացման ամսաթիվ</th>
+                <th id="thBookAction">Գործողություն</th>
+              </tr>
+            </thead>
+            <tbody id="adminAllBooksTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="usersTab" class="admin-section">
+        <h3 id="usersHeading" style="margin-bottom: 16px; color: var(--text-main);">Համակարգի օգտատերեր</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr><th id="thName">Անուն</th><th id="thEmail">Էլ. փոստ</th><th id="thStatus">Կարգավիճակ</th></tr>
+            </thead>
+            <tbody id="adminUsersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="borrowsTab" class="admin-section">
+        <h3 id="borrowsHeading" style="margin-bottom: 16px; color: var(--text-main);">Ամրագրված գրքեր և պատմություն</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr><th id="thBook">Գիրք</th><th id="thBorrower">Վերցնող օգտատեր</th><th id="thBorrowDate">Տրման ամսաթիվ</th><th id="thDueDate">Վերադարձի ժամկետ</th><th id="thAction">Գործողություն</th></tr>
+            </thead>
+            <tbody id="adminBorrowsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // BOTH FILES NOW USE THE EXACT SAME STORAGE KEY
+    const STORAGE_KEY = 'library_app_books_v13';
+    const USERS_KEY = 'library_registered_users';
+    const SESSION_KEY = 'library_logged_user';
+    const LANG_KEY = 'library_lang';
+    const THEME_KEY = 'library_theme';
+
+    let currentLang = localStorage.getItem(LANG_KEY) || 'hy';
+    let currentUser = null;
+    let books = [];
+    let isLangMenuOpen = false;
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+      }
+      updateThemeBtnIcon();
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
+      localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+      updateThemeBtnIcon();
+    }
+
+    function updateThemeBtnIcon() {
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {
+        const isLight = document.body.classList.contains('light-theme');
+        btn.textContent = isLight ? '🌙' : '☀️';
+      }
+    }
+
+    const translations = {
+      hy: {
+        sidebarSubtitle: 'Ադմին Վահանակ',
+        btnTabAdd: '➕ Ավելացնել գիրք',
+        btnTabAllBooks: '📚 Բոլոր գրքերը',
+        btnTabUsers: '👥 Գրանցված օգտատերեր',
+        btnTabBorrows: '📋 Ամրագրումների պատմություն',
+        linkHome: '🏠 Գլխավոր էջ',
+        btnLogout: '🚪 Դուրս գալ',
+        headerTitle: '⚙️ Ադմինիստրատորի Վահանակ',
+        headerSub: 'Կառավարեք գրքերը, դիտեք օգտատերերին և ամրագրումների պատմությունը',
+        addBookHeading: 'Նոր գրքի ավելացում (Բազմալեզու)',
+        btnAddBookSubmit: '➕ Ավելացնել գիրքը',
+        allBooksHeading: 'Կայքի բոլոր գրքերի ցանկ',
+        usersHeading: 'Համակարգի օգտատերեր',
+        borrowsHeading: 'Ամրագրված գրքեր և պատմություն',
+        thName: 'Անուն',
+        thEmail: 'Էլ. փոստ',
+        thStatus: 'Կարգավիճակ',
+        thBook: 'Գիրք',
+        thBorrower: 'Վերցնող օգտատեր',
+        thBorrowDate: 'Տրման ամսաթիվ',
+        thDueDate: 'Վերադարձի ժամկետ',
+        thAction: 'Գործողություն',
+        thBookTitle: 'Վերնագիր',
+        thBookAuthor: 'Հեղինակ',
+        thAddedBy: 'Ավելացնող',
+        thAddedAt: 'Ավելացման ամսաթիվ',
+        thBookAction: 'Գործողություն',
+        deleteBtn: 'Հեռացնել',
+        activeStatus: 'Ակտիվ',
+        noBorrows: 'Ամրագրված գրքեր չկան',
+        noBooks: 'Գրքեր չկան',
+        returnBtn: 'Վերադարձնել',
+        successAdd: 'Գիրքը հաջողությամբ ավելացվեց բոլոր լեզուներով:',
+        successDelete: 'Գիրքը հաջողությամբ հեռացվեց կայքից:',
+        successReturn: 'Գիրքը հաջողությամբ վերադարձվեց համակարգ:',
+        phYear: '📅 Տարեթիվ',
+        phCover: '🖼️ Նկարի URL (կամընտիր)',
+        defaultAdmin: 'Ադմինիստրատոր',
+        unknownDate: 'Անհայտ',
+        langBtnLabel: '🇦🇲 Հայերեն ▾'
+      },
+      en: {
+        sidebarSubtitle: 'Admin Dashboard',
+        btnTabAdd: '➕ Add Book',
+        btnTabAllBooks: '📚 All Books',
+        btnTabUsers: '👥 Registered Users',
+        btnTabBorrows: '📋 Borrow History',
+        linkHome: '🏠 Home Page',
+        btnLogout: '🚪 Logout',
+        headerTitle: '⚙️ Admin Dashboard',
+        headerSub: 'Manage books, view users and borrow history',
+        addBookHeading: 'Add New Book (Multilingual)',
+        btnAddBookSubmit: '➕ Add Book',
+        allBooksHeading: 'List of All Books',
+        usersHeading: 'System Users',
+        borrowsHeading: 'Borrowed Books & History',
+        thName: 'Name',
+        thEmail: 'Email',
+        thStatus: 'Status',
+        thBook: 'Book',
+        thBorrower: 'Borrower',
+        thBorrowDate: 'Borrow Date',
+        thDueDate: 'Due Date',
+        thAction: 'Action',
+        thBookTitle: 'Title',
+        thBookAuthor: 'Author',
+        thAddedBy: 'Added By',
+        thAddedAt: 'Added At',
+        thBookAction: 'Action',
+        deleteBtn: 'Delete',
+        activeStatus: 'Active',
+        noBorrows: 'No active borrows',
+        noBooks: 'No books available',
+        returnBtn: 'Return',
+        successAdd: 'Book successfully added in all languages!',
+        successDelete: 'Book successfully deleted from the site.',
+        successReturn: 'Book successfully returned to system!',
+        phYear: '📅 Year',
+        phCover: '🖼️ Cover Image URL (optional)',
+        defaultAdmin: 'Administrator',
+        unknownDate: 'Unknown',
+        langBtnLabel: '🇬🇧 English ▾'
+      },
+      ru: {
+        sidebarSubtitle: 'Панель Админа',
+        btnTabAdd: '➕ Добавить книгу',
+        btnTabAllBooks: '📚 Все книги',
+        btnTabUsers: '👥 Пользователи',
+        btnTabBorrows: '📋 История брони',
+        linkHome: '🏠 Главная страница',
+        btnLogout: '🚪 Выйти',
+        headerTitle: '⚙️ Панель Администратора',
+        headerSub: 'Управляйте книгами, просмотрите пользователей и историю бронирования',
+        addBookHeading: 'Добавить новую книгу (многоязычная)',
+        btnAddBookSubmit: '➕ Добавить книгу',
+        allBooksHeading: 'Список всех книг',
+        usersHeading: 'Пользователи системы',
+        borrowsHeading: 'Забронированные книги и история',
+        thName: 'Имя',
+        thEmail: 'Эл. почта',
+        thStatus: 'Статус',
+        thBook: 'Книга',
+        thBorrower: 'Пользователь',
+        thBorrowDate: 'Дата выдачи',
+        thDueDate: 'Срок возврата',
+        thAction: 'Действие',
+        thBookTitle: 'Название',
+        thBookAuthor: 'Автор',
+        thAddedBy: 'Добавил',
+        thAddedAt: 'Дата добавления',
+        thBookAction: 'Действие',
+        deleteBtn: 'Удалить',
+        activeStatus: 'Активен',
+        noBorrows: 'Нет забронированных книг',
+        noBooks: 'Нет доступных книг',
+        returnBtn: 'Вернуть',
+        successAdd: 'Книга успешно добавлена на всех языках!',
+        successDelete: 'Книга успешно удалена с сайта.',
+        successReturn: 'Книга успешно возвращена в систему!',
+        phYear: '📅 Год',
+        phCover: '🖼️ URL обложки (необязательно)',
+        defaultAdmin: 'Администратор',
+        unknownDate: 'Неизвестно',
+        langBtnLabel: '🇷🇺 Русский ▾'
+      }
+    };
+
+    function toggleLangMenu(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('langDropdownMenu');
+      isLangMenuOpen = !isLangMenuOpen;
+      if (isLangMenuOpen) menu.classList.add('show');
+      else menu.classList.remove('show');
+    }
+
+    window.addEventListener('click', (e) => {
+      const langContainer = document.querySelector('.lang-dropdown-container');
+      const langMenu = document.getElementById('langDropdownMenu');
+      if (langContainer && !langContainer.contains(e.target)) {
+        isLangMenuOpen = false;
+        if (langMenu) langMenu.classList.remove('show');
+      }
+    });
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem(LANG_KEY, lang);
+      isLangMenuOpen = false;
+      document.getElementById('langDropdownMenu').classList.remove('show');
+      updateTexts();
+      loadAdminData();
+    }
+
+    function updateTexts() {
+      const t = translations[currentLang];
+      document.getElementById('sidebarSubtitle').textContent = t.sidebarSubtitle;
+      document.getElementById('btnTabAdd').textContent = t.btnTabAdd;
+      document.getElementById('btnTabAllBooks').textContent = t.btnTabAllBooks;
+      document.getElementById('btnTabUsers').textContent = t.btnTabUsers;
+      document.getElementById('btnTabBorrows').textContent = t.btnTabBorrows;
+      document.getElementById('linkHome').textContent = t.linkHome;
+      document.getElementById('btnLogout').textContent = t.btnLogout;
+      document.getElementById('headerTitle').textContent = t.headerTitle;
+      document.getElementById('headerSub').textContent = t.headerSub;
+      document.getElementById('addBookHeading').textContent = t.addBookHeading;
+      document.getElementById('btnAddBookSubmit').textContent = t.btnAddBookSubmit;
+      document.getElementById('allBooksHeading').textContent = t.allBooksHeading;
+      document.getElementById('usersHeading').textContent = t.usersHeading;
+      document.getElementById('borrowsHeading').textContent = t.borrowsHeading;
+      document.getElementById('thName').textContent = t.thName;
+      document.getElementById('thEmail').textContent = t.thEmail;
+      document.getElementById('thStatus').textContent = t.thStatus;
+      document.getElementById('thBook').textContent = t.thBook;
+      document.getElementById('thBorrower').textContent = t.thBorrower;
+      document.getElementById('thBorrowDate').textContent = t.thBorrowDate;
+      document.getElementById('thDueDate').textContent = t.thDueDate;
+      document.getElementById('thAction').textContent = t.thAction;
+
+      document.getElementById('thBookTitle').textContent = t.thBookTitle;
+      document.getElementById('thBookAuthor').textContent = t.thBookAuthor;
+      document.getElementById('thAddedBy').textContent = t.thAddedBy;
+      document.getElementById('thAddedAt').textContent = t.thAddedAt;
+      document.getElementById('thBookAction').textContent = t.thBookAction;
+
+      document.getElementById('bookYear').placeholder = t.phYear;
+      document.getElementById('bookCover').placeholder = t.phCover;
+      document.getElementById('langDropdownBtn').textContent = t.langBtnLabel;
+    }
+
+    function checkAdminAuth() {
+      const session = localStorage.getItem(SESSION_KEY);
+      if (session) {
+        try { currentUser = JSON.parse(session); } catch(e) { currentUser = null; }
+      }
+      if (!currentUser || currentUser.email !== 'admin@example.com') {
+        window.location.href = 'index.html';
+      }
+    }
+
+    function loadBooks() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try { books = JSON.parse(stored); } catch(e) { books = []; }
+      } else {
+        books = [];
+      }
+    }
+
+    function saveBooks() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+    }
+
+    function showAlert(message, type = 'error') {
+      const banner = document.getElementById('alertBanner');
+      banner.className = `alert alert-${type}`;
+      banner.textContent = message;
+      banner.style.display = 'block';
+      setTimeout(() => { banner.style.display = 'none'; }, 4000);
+    }
+
+    function switchAdminTab(tabId) {
+      document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    function loadAdminData() {
+      const t = translations[currentLang];
+      
+      // Users table
+      const usersTable = document.getElementById('adminUsersTableBody');
+      const storedUsers = localStorage.getItem(USERS_KEY);
+      let users = storedUsers ? JSON.parse(storedUsers) : [
+        { name: 'Admin User', email: 'admin@example.com' },
+        { name: 'Test User', email: 'user@example.com' }
+      ];
+      usersTable.innerHTML = users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td><span style="color: var(--success);">${t.activeStatus}</span></td></tr>`).join('');
+
+      // All Books table
+      loadBooks();
+      const allBooksTable = document.getElementById('adminAllBooksTableBody');
+      if (books.length === 0) {
+        allBooksTable.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">${t.noBooks}</td></tr>`;
+      } else {
+        allBooksTable.innerHTML = books.map(b => {
+          const title = (b.title && (b.title[currentLang] || b.title.hy)) || b.title || 'Անհայտ վերնագիր';
+          const author = (b.author && (b.author[currentLang] || b.author.hy)) || b.author || 'Անհայտ հեղինակ';
+          const addedBy = b.addedBy || t.defaultAdmin;
+          const addedAt = b.addedAt ? new Date(b.addedAt).toLocaleString() : t.unknownDate;
+          return `
+            <tr>
+              <td><strong>${title}</strong></td>
+              <td>${author}</td>
+              <td>${addedBy}</td>
+              <td>${addedAt}</td>
+              <td><button class="btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="deleteBook('${b.id}')">${t.deleteBtn}</button></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Borrows table
+      const borrowsTable = document.getElementById('adminBorrowsTableBody');
+      const borrowedBooks = books.filter(b => b.status === 'Borrowed');
+      
+      if (borrowedBooks.length === 0) {
+        borrowsTable.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">${t.noBorrows}</td></tr>`;
+      } else {
+        borrowsTable.innerHTML = borrowedBooks.map(b => `
+          <tr>
+            <td>${(b.title && (b.title[currentLang] || b.title.hy)) || b.title}</td>
+            <td><strong>${b.borrower}</strong></td>
+            <td>${new Date(b.borrowDate).toLocaleDateString()}</td>
+            <td>${new Date(b.dueDate).toLocaleDateString()}</td>
+            <td><button class="btn-warning" style="padding: 6px 12px; font-size: 0.85rem;" onclick="adminReturnBook('${b.id}')">${t.returnBtn}</button></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function adminReturnBook(id) {
+      loadBooks();
+      const book = books.find(b => b.id === id);
+      if (book) {
+        book.status = 'Available';
+        book.borrower = '';
+        book.borrowerEmail = '';
+        book.borrowDate = '';
+        book.dueDate = '';
+        saveBooks();
+        loadAdminData();
+        showAlert(translations[currentLang].successReturn, 'success');
+      }
+    }
+
+    function deleteBook(id) {
+      loadBooks();
+      books = books.filter(b => b.id !== id);
+      saveBooks();
+      loadAdminData();
+      showAlert(translations[currentLang].successDelete, 'success');
+    }
+
+    document.getElementById('addBookForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      loadBooks();
+
+      const newBook = {
+        id: Date.now().toString(),
+        title: {
+          hy: document.getElementById('title_hy').value.trim(),
+          en: document.getElementById('title_en').value.trim(),
+          ru: document.getElementById('title_ru').value.trim()
+        },
+        author: {
+          hy: document.getElementById('author_hy').value.trim(),
+          en: document.getElementById('author_en').value.trim(),
+          ru: document.getElementById('author_ru').value.trim()
+        },
+        year: document.getElementById('bookYear').value ? parseInt(document.getElementById('bookYear').value) : '',
+        cover: document.getElementById('bookCover').value.trim() || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=600&q=80',
+        status: 'Available',
+        borrower: '',
+        borrowerEmail: '',
+        borrowDate: '',
+        dueDate: '',
+        addedBy: currentUser ? (currentUser.name || currentUser.email) : 'Admin',
+        addedAt: new Date().toISOString()
+      };
+
+      books.push(newBook);
+      saveBooks();
+      e.target.reset();
+      loadAdminData();
+      showAlert(translations[currentLang].successAdd, 'success');
+    });
+
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      window.location.href = 'auth.html';
+    }
+
+    initTheme();
+    checkAdminAuth();
+    updateTexts();
+    loadAdminData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+:root {
+  --bg-color: #0b0d14;
+  --surface-color: #151823;
+  --card-bg: rgba(21, 24, 35, 0.85);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --border: rgba(255, 255, 255, 0.1);
+  --radius: 14px;
+  --shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme {
+  --bg-color: #f1f5f9;
+  --surface-color: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: rgba(0, 0, 0, 0.1);
+  --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+html { scroll-behavior: smooth; }
+
+/* Թեթև և գեղեցիկ գրադիենտային ֆոն բոլոր էջերի համար */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding-bottom: 50px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Light theme-ի հատուկ գրադիենտային երանգավորում */
+body.light-theme {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(59, 130, 246, 0.04) 0px, transparent 60%);
+  background-attachment: fixed;
+}
